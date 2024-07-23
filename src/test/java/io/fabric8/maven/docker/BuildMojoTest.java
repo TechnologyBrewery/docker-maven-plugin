@@ -86,7 +86,7 @@ class BuildMojoTest extends MojoTestBase {
     }
 
     @Test
-    void buildUsingBuildx() throws IOException, MojoExecutionException {
+    void buildUsingBuildxWithDockerContainerDriver() throws IOException, MojoExecutionException {
         givenBuildXService();
 
         givenMavenProject(buildMojo);
@@ -96,6 +96,20 @@ class BuildMojoTest extends MojoTestBase {
         whenMojoExecutes();
 
         thenBuildxRun(null, null, true, null );
+    }
+
+    @Test
+    void buildUsingBuildxWithDefaultDriver() throws IOException, MojoExecutionException {
+        givenBuildXService();
+
+        givenMavenProject(buildMojo);
+        ImageConfiguration imageConfiguration = singleBuildXImageWithDefaultBuilderName(null);
+        givenResolvedImages(buildMojo, Collections.singletonList(imageConfiguration));
+        givenPackaging("jar");
+
+        whenMojoExecutes();
+
+        thenBuildxRun(null, null, true, null, Collections.emptyList(), false);
     }
 
     @Test
@@ -269,7 +283,7 @@ class BuildMojoTest extends MojoTestBase {
         List<String> fullTags = skipTag ? Collections.emptyList() : tags.stream()
                 .map(tag -> new ImageName(imageConfiguration.getName(), tag).getFullName())
                 .collect(Collectors.toList());
-        thenBuildxRun(null, null, true, null, fullTags);
+        thenBuildxRun(null, null, true, null, fullTags, true);
     }
 
     @ParameterizedTest
@@ -348,11 +362,11 @@ class BuildMojoTest extends MojoTestBase {
 
     private void thenBuildxRun(String relativeConfigFile, String contextDir, boolean nativePlatformIncluded,
                                String attestation) throws MojoExecutionException {
-        thenBuildxRun(relativeConfigFile, contextDir, nativePlatformIncluded, attestation, Collections.emptyList());
+        thenBuildxRun(relativeConfigFile, contextDir, nativePlatformIncluded, attestation, Collections.emptyList(), true);
     }
 
     private void thenBuildxRun(String relativeConfigFile, String contextDir,
-                               boolean nativePlatformIncluded, String attestation, List<String> tags)
+                               boolean nativePlatformIncluded, String attestation, List<String> tags, boolean useMavenBuilder)
             throws MojoExecutionException {
         Path buildPath = projectBaseDirectory.toPath().resolve("target/docker/example/latest");
         String config = getOsDependentBuild(buildPath, "docker");
@@ -360,18 +374,27 @@ class BuildMojoTest extends MojoTestBase {
                 relativeConfigFile != null ? getOsDependentBuild(projectBaseDirectory.toPath(), relativeConfigFile) :
                         null;
 
-        List<String> cmds =
-                BuildXService.append(new ArrayList<>(), "docker", "--config", config, "buildx",
-                        "create", "--driver", "docker-container", "--name", "maven", "--node", "maven0");
-        if (configFile != null) {
-            BuildXService.append(cmds, "--config", configFile.replace('/', File.separatorChar));
+        if (useMavenBuilder) {
+            List<String> cmds =
+                    BuildXService.append(new ArrayList<>(), "docker", "--config", config, "buildx", "create",
+                            "--driver", "docker-container", "--name", "maven", "--node", "maven0");
+
+            if (configFile != null) {
+                cmds = BuildXService.append(cmds, "--config", configFile.replace('/', File.separatorChar));
+            }
+            Mockito.verify(exec).process(cmds);
         }
-        Mockito.verify(exec).process(cmds);
 
         if (nativePlatformIncluded) {
-            List<String> buildXLine = BuildXService.append(new ArrayList<>(), "docker", "--config", config, "buildx",
-                    "build", "--progress=plain", "--builder", "maven",
-                    "--platform", NATIVE_PLATFORM, "--tag", "example:latest");
+            List<String> buildXLineInitial = BuildXService.append(new ArrayList<>(), "docker", "--config", config, "buildx",
+                    "build", "--progress=plain", "--builder");
+            if (useMavenBuilder) {
+                buildXLineInitial.add("maven");
+            } else {
+                buildXLineInitial.add("default");
+            }
+
+            List<String> buildXLine = BuildXService.append(buildXLineInitial,"--platform", NATIVE_PLATFORM, "--tag", "example:latest");
 
             tags.forEach(tag -> {
                 buildXLine.add("--tag");
@@ -444,6 +467,11 @@ class BuildMojoTest extends MojoTestBase {
         return singleImageConfiguration(getBuildXPlatforms(TWO_BUILDX_PLATFORMS).attestations(
                 new AttestationConfiguration.Builder().sbom(sbom).provenance(provenance).build())
             .build(), null);
+    }
+
+    private ImageConfiguration singleBuildXImageWithDefaultBuilderName(String configFile) {
+        return singleImageConfiguration(getBuildXPlatforms(NATIVE_PLATFORM).configFile(configFile)
+                .builderName("default").build(), null);
     }
 
     protected ImageConfiguration singleImageWithAuthRegistry(String dockerFile) {
