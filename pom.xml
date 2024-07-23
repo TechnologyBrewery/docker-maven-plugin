@@ -10,7 +10,7 @@
 
   <groupId>org.technologybrewery.fabric8</groupId>
   <artifactId>docker-maven-plugin</artifactId>
-  <version>0.45-SNAPSHOT</version>
+  <version>0.45-tb-0.1.0</version>
   <packaging>maven-plugin</packaging>
 
   <name>docker-maven-plugin</name>
@@ -52,7 +52,7 @@
   <scm>
     <connection>scm:git:git://github.com/TechnologyBrewery/docker-maven-plugin.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/TechnologyBrewery/docker-maven-plugin.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>docker-maven-plugin-0.45-tb-0.1.0</tag>
     <url>git://github.com/TechnologyBrewery/docker-maven-plugin.git</url>
   </scm>
 
@@ -71,7 +71,7 @@
     <maven.version>3.8.1</maven.version>
     <minimum.maven.version>3.3.9</minimum.maven.version>
     <mockito.version>4.5.1</mockito.version>
-    <project.build.outputTimestamp>2024-02-17T15:18:53Z</project.build.outputTimestamp>
+    <project.build.outputTimestamp>2024-07-23T21:25:47Z</project.build.outputTimestamp>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <surefire.version>3.0.0-M2</surefire.version>
     <system-stubs.version>2.0.1</system-stubs.version>
