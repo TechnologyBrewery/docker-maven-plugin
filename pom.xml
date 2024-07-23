@@ -2,7 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>io.fabric8</groupId>
+  <parent>
+    <groupId>org.technologybrewery</groupId>
+    <artifactId>parent</artifactId>
+    <version>9</version>
+  </parent>
+
+  <groupId>org.technologybrewery.fabric8</groupId>
   <artifactId>docker-maven-plugin</artifactId>
   <version>0.45-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
@@ -44,29 +50,16 @@
   </prerequisites>
 
   <scm>
-    <connection>scm:git:git://github.com/fabric8io/docker-maven-plugin.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/fabric8io/docker-maven-plugin.git</developerConnection>
+    <connection>scm:git:git://github.com/TechnologyBrewery/docker-maven-plugin.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/TechnologyBrewery/docker-maven-plugin.git</developerConnection>
     <tag>HEAD</tag>
-    <url>git://github.com/fabric8io/docker-maven-plugin.git</url>
+    <url>git://github.com/TechnologyBrewery/docker-maven-plugin.git</url>
   </scm>
 
   <issueManagement>
     <system>GitHub</system>
     <url>https://github.com/fabric8io/docker-maven-plugin/issues/</url>
   </issueManagement>
-
-  <distributionManagement>
-    <repository>
-      <id>sonatype-nexus-staging</id>
-      <name>Nexus Release Repository</name>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-    </repository>
-    <snapshotRepository>
-      <id>sonatype-nexus-snapshots</id>
-      <name>Sonatype Nexus Snapshots</name>
-      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-    </snapshotRepository>
-  </distributionManagement>
 
   <properties>
     <byte-buddy.version>1.12.10</byte-buddy.version>

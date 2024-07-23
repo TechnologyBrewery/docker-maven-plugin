@@ -1,3 +1,8 @@
+This is a temporary fork  (hopefully).  We have NO intention of keeping this forked repository active any longer than 
+needed.  Current items included are:
+* In-flight 0.45 items from the source repository
+* https://github.com/fabric8io/docker-maven-plugin/issues/1804 - allow use of default driver with buildx
+
 # docker-maven-plugin
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.fabric8/docker-maven-plugin/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.fabric8/docker-maven-plugin/)
