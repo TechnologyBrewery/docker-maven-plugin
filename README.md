@@ -2,6 +2,7 @@ This is a temporary fork  (hopefully).  We have NO intention of keeping this for
 needed.  Current items included are:
 * In-flight 0.47 items from the source repository
 * https://github.com/fabric8io/docker-maven-plugin/issues/1804 - allow use of default driver with buildx
+* https://github.com/fabric8io/docker-maven-plugin/pull/1868 - mark mojos as thread-safe for use with mvnd
 
 # docker-maven-plugin
 
